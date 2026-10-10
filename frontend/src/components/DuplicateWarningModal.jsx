@@ -1,30 +1,36 @@
-import React from 'react';
-import { AlertTriangle, ExternalLink, X, ArrowRight, Upload } from 'lucide-react';
+import React from "react";
+import {
+  AlertTriangle,
+  ExternalLink,
+  X,
+  ArrowRight,
+  Upload,
+} from "lucide-react";
 
-export default function DuplicateWarningModal({ 
-  isOpen, 
-  existingPaper, 
-  onViewExisting, 
-  onCancel, 
-  onProceedAnyway 
+export default function DuplicateWarningModal({
+  isOpen,
+  existingPaper,
+  onViewExisting,
+  onCancel,
+  onProceedAnyway,
 }) {
   if (!isOpen || !existingPaper) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-xs animate-fade-in" onClick={onCancel}>
-      <div 
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-xs animate-fade-in"
+      onClick={onCancel}
+    >
+      <div
         className="window-card bg-white dark:bg-[#132238] rounded-2xl max-w-md w-full shadow-2xl border border-[#5798D7]/30 relative overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Window Header */}
         <div className="window-header bg-[#E6F1FA] dark:bg-[#1A2C46] border-b border-[#5798D7]/20 px-5 py-3 flex items-center justify-between">
           <div className="flex items-center space-x-3">
-            <div className="traffic-dots">
-              <span className="traffic-dot bg-[#ff5f56]" />
-              <span className="traffic-dot bg-[#ffbd2e]" />
-              <span className="traffic-dot bg-[#27c93f]" />
-            </div>
-            <span className="text-xs font-black text-black dark:text-white pl-2">Duplicate Notice</span>
+            <span className="text-xs font-black text-black dark:text-white pl-2">
+              Duplicate Notice
+            </span>
           </div>
           <button
             onClick={onCancel}
@@ -57,15 +63,20 @@ export default function DuplicateWarningModal({
               A question paper already exists for:
             </p>
             <div className="bg-white dark:bg-[#1A2C46] p-2.5 rounded-lg border border-[#5798D7]/30 font-mono text-xs text-black dark:text-white font-extrabold">
-              {existingPaper.course} — {existingPaper.year} — {existingPaper.exam_type}
+              {existingPaper.course} — {existingPaper.year} —{" "}
+              {existingPaper.exam_type}
             </div>
             <p className="text-xs text-black/70 dark:text-slate-400 font-medium">
-              Uploaded on {new Date(existingPaper.upload_date).toLocaleDateString()} ({existingPaper.page_count} page{existingPaper.page_count !== 1 ? 's' : ''}).
+              Uploaded on{" "}
+              {new Date(existingPaper.upload_date).toLocaleDateString()} (
+              {existingPaper.page_count} page
+              {existingPaper.page_count !== 1 ? "s" : ""}).
             </p>
           </div>
 
           <p className="text-xs text-black/70 dark:text-slate-300 my-4 leading-relaxed font-medium">
-            You can view the existing paper to check if it matches yours, cancel this upload, or proceed to upload an additional set anyway.
+            You can view the existing paper to check if it matches yours, cancel
+            this upload, or proceed to upload an additional set anyway.
           </p>
 
           {/* Action Buttons */}

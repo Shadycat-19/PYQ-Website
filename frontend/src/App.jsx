@@ -1,25 +1,29 @@
-import React, { useState, useEffect } from 'react';
-import Navbar from './components/Navbar';
-import ImageGuidelinesModal from './components/ImageGuidelinesModal';
-import UploadPaperModal from './components/UploadPaperModal';
-import PaperViewerModal from './components/PaperViewerModal';
+import React, { useState, useEffect } from "react";
+import Navbar from "./components/Navbar";
+import ImageGuidelinesModal from "./components/ImageGuidelinesModal";
+import UploadPaperModal from "./components/UploadPaperModal";
+import PaperViewerModal from "./components/PaperViewerModal";
 
-import HomePage from './pages/HomePage';
-import BrowsePage from './pages/BrowsePage';
-import PaperDetailPage from './pages/PaperDetailPage';
-import DeleteConfirmModal from './components/DeleteConfirmModal';
+import HomePage from "./pages/HomePage";
+import BrowsePage from "./pages/BrowsePage";
+import PaperDetailPage from "./pages/PaperDetailPage";
+import DeleteConfirmModal from "./components/DeleteConfirmModal";
 
-import { fetchPapers, getPaperDownloadUrl, deletePaperApi } from './services/api';
+import {
+  fetchPapers,
+  getPaperDownloadUrl,
+  deletePaperApi,
+} from "./services/api";
 
 export default function App() {
   // Theme state with localStorage persistence (defaults to false for the light Frost/Denim theme)
   const [darkMode, setDarkMode] = useState(() => {
-    const saved = localStorage.getItem('pyq_dark_mode');
+    const saved = localStorage.getItem("pyq_dark_mode");
     return saved !== null ? JSON.parse(saved) : false;
   });
 
   // Navigation tab state: 'home', 'browse', 'paper-detail'
-  const [currentTab, setCurrentTab] = useState('home');
+  const [currentTab, setCurrentTab] = useState("home");
   const [selectedPaperId, setSelectedPaperId] = useState(null);
 
   // Modals state
@@ -35,11 +39,11 @@ export default function App() {
   // Sync dark mode class on <html>
   useEffect(() => {
     if (darkMode) {
-      document.documentElement.classList.add('dark');
+      document.documentElement.classList.add("dark");
     } else {
-      document.documentElement.classList.remove('dark');
+      document.documentElement.classList.remove("dark");
     }
-    localStorage.setItem('pyq_dark_mode', JSON.stringify(darkMode));
+    localStorage.setItem("pyq_dark_mode", JSON.stringify(darkMode));
   }, [darkMode]);
 
   // Load recent papers
@@ -48,7 +52,7 @@ export default function App() {
       const data = await fetchPapers();
       setRecentPapers(data);
     } catch (err) {
-      console.error('Failed to load recent papers:', err);
+      console.error("Failed to load recent papers:", err);
     }
   };
 
@@ -59,7 +63,7 @@ export default function App() {
   // Handlers
   const handleViewPaper = (paperId) => {
     setSelectedPaperId(paperId);
-    setCurrentTab('paper-detail');
+    setCurrentTab("paper-detail");
   };
 
   const handleOpenPaperViewer = (paper) => {
@@ -73,7 +77,7 @@ export default function App() {
 
   const handleViewSolutions = (paperId) => {
     setSelectedPaperId(paperId);
-    setCurrentTab('paper-detail');
+    setCurrentTab("paper-detail");
   };
 
   const handleSuccessUpload = (newPaper) => {
@@ -93,14 +97,14 @@ export default function App() {
         deleteTarget.onDeleted();
       }
       await loadRecentPapers();
-      if (currentTab === 'paper-detail' && selectedPaperId === paperId) {
-        setCurrentTab('browse');
+      if (currentTab === "paper-detail" && selectedPaperId === paperId) {
+        setCurrentTab("browse");
         setSelectedPaperId(null);
       }
       setDeleteTarget(null);
     } catch (err) {
-      console.error('Failed to delete paper:', err);
-      alert(err.message || 'Failed to delete question paper.');
+      console.error("Failed to delete paper:", err);
+      alert(err.message || "Failed to delete question paper.");
     } finally {
       setIsDeletingPaper(false);
     }
@@ -108,7 +112,6 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-[var(--bg-app)] text-[var(--text-main)] flex flex-col font-sans transition-colors duration-200">
-      
       {/* Navigation Header */}
       <Navbar
         currentTab={currentTab}
@@ -121,10 +124,10 @@ export default function App() {
 
       {/* Main Content Area */}
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-12">
-        {currentTab === 'home' && (
+        {currentTab === "home" && (
           <HomePage
             recentPapers={recentPapers}
-            onNavigateBrowse={() => setCurrentTab('browse')}
+            onNavigateBrowse={() => setCurrentTab("browse")}
             onOpenUpload={() => setIsUploadPaperOpen(true)}
             onViewPaper={handleViewPaper}
             onDownloadPaper={handleDownloadPaper}
@@ -133,7 +136,7 @@ export default function App() {
           />
         )}
 
-        {currentTab === 'browse' && (
+        {currentTab === "browse" && (
           <BrowsePage
             onViewPaper={handleViewPaper}
             onDownloadPaper={handleDownloadPaper}
@@ -143,10 +146,10 @@ export default function App() {
           />
         )}
 
-        {currentTab === 'paper-detail' && (
+        {currentTab === "paper-detail" && (
           <PaperDetailPage
             paperId={selectedPaperId}
-            onBack={() => setCurrentTab('browse')}
+            onBack={() => setCurrentTab("browse")}
             onViewPaperViewer={handleOpenPaperViewer}
             onDeletePaper={handleRequestDeletePaper}
           />
@@ -156,15 +159,19 @@ export default function App() {
       {/* Footer */}
       <footer className="border-t border-[var(--border-ui)] bg-[var(--footer-bg)] py-8 text-center text-xs text-[var(--text-secondary)] font-semibold transition-colors duration-200">
         <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p>© {new Date().getFullYear()} PYQVault — Local Student Question Paper Repository</p>
+          <p>
+            © {new Date().getFullYear()} PYQVault — Student Question Paper
+            Repository
+          </p>
           <div className="flex items-center space-x-4">
-            <button onClick={() => setIsGuidelinesOpen(true)} className="hover:text-[#326da6] transition-colors cursor-pointer">
+            <button
+              onClick={() => setIsGuidelinesOpen(true)}
+              className="hover:text-[#326da6] transition-colors cursor-pointer"
+            >
               Upload Guidelines
             </button>
             <span>•</span>
             <span>No Auth Required</span>
-            <span>•</span>
-            <span>Local SQLite Backend</span>
           </div>
         </div>
       </footer>
@@ -199,7 +206,6 @@ export default function App() {
         onConfirm={handleConfirmDelete}
         isDeleting={isDeletingPaper}
       />
-
     </div>
   );
 }

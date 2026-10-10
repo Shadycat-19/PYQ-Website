@@ -1,33 +1,30 @@
-import React from 'react';
-import { Trash2, AlertTriangle, X, Loader2 } from 'lucide-react';
+import React from "react";
+import { Trash2, AlertTriangle, X, Loader2 } from "lucide-react";
 
 export default function DeleteConfirmModal({
   isOpen,
   paper,
   onClose,
   onConfirm,
-  isDeleting = false
+  isDeleting = false,
 }) {
   if (!isOpen || !paper) return null;
 
   return (
-    <div 
+    <div
       className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-xs animate-fade-in"
       onClick={onClose}
     >
-      <div 
+      <div
         className="window-card bg-white dark:bg-[#132238] rounded-2xl max-w-md w-full shadow-2xl border border-red-300 dark:border-red-900/50 relative overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Window Header */}
         <div className="window-header bg-[#E6F1FA] dark:bg-[#1A2C46] border-b border-[#5798D7]/20 px-5 py-3 flex items-center justify-between">
           <div className="flex items-center space-x-3">
-            <div className="traffic-dots">
-              <span className="traffic-dot bg-[#ff5f56]" />
-              <span className="traffic-dot bg-[#ffbd2e]" />
-              <span className="traffic-dot bg-[#27c93f]" />
-            </div>
-            <span className="text-xs font-black text-black dark:text-white pl-2">System Notice</span>
+            <span className="text-xs font-black text-black dark:text-white pl-2">
+              System Notice
+            </span>
           </div>
           <button
             onClick={onClose}
@@ -65,7 +62,10 @@ export default function DeleteConfirmModal({
             </div>
             <p className="text-xs text-black/80 dark:text-slate-300 flex items-center space-x-1.5 font-medium">
               <AlertTriangle className="w-3.5 h-3.5 shrink-0 text-red-500" />
-              <span>All uploaded image pages and community solutions will also be permanently deleted.</span>
+              <span>
+                All uploaded image pages and community solutions will also be
+                permanently deleted.
+              </span>
             </p>
           </div>
 
@@ -100,7 +100,6 @@ export default function DeleteConfirmModal({
             </button>
           </div>
         </div>
-
       </div>
     </div>
   );

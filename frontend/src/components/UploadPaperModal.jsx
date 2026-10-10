@@ -1,13 +1,32 @@
-import React, { useState, useEffect } from 'react';
-import { X, Upload, FileImage, Plus, Trash2, AlertCircle, Info, CheckCircle2, ArrowRight } from 'lucide-react';
-import { checkDuplicatePaper, uploadPaperApi, fetchMetaOptionsApi } from '../services/api';
-import DuplicateWarningModal from './DuplicateWarningModal';
+import React, { useState, useEffect } from "react";
+import {
+  X,
+  Upload,
+  FileImage,
+  Plus,
+  Trash2,
+  AlertCircle,
+  Info,
+  CheckCircle2,
+  ArrowRight,
+} from "lucide-react";
+import {
+  checkDuplicatePaper,
+  uploadPaperApi,
+  fetchMetaOptionsApi,
+} from "../services/api";
+import DuplicateWarningModal from "./DuplicateWarningModal";
 
-export default function UploadPaperModal({ isOpen, onClose, onSuccessUpload, onViewPaper }) {
-  const [course, setCourse] = useState('');
+export default function UploadPaperModal({
+  isOpen,
+  onClose,
+  onSuccessUpload,
+  onViewPaper,
+}) {
+  const [course, setCourse] = useState("");
   const [year, setYear] = useState(new Date().getFullYear().toString());
-  const [examType, setExamType] = useState('Endsem');
-  const [customExamType, setCustomExamType] = useState('');
+  const [examType, setExamType] = useState("Endsem");
+  const [customExamType, setCustomExamType] = useState("");
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [previews, setPreviews] = useState([]);
 
@@ -23,10 +42,10 @@ export default function UploadPaperModal({ isOpen, onClose, onSuccessUpload, onV
     if (isOpen) {
       // Fetch dynamic course suggestions
       fetchMetaOptionsApi()
-        .then(data => {
+        .then((data) => {
           if (data.courses) setExistingCourses(data.courses);
         })
-        .catch(err => console.error(err));
+        .catch((err) => console.error(err));
     }
   }, [isOpen]);
 
@@ -42,8 +61,12 @@ export default function UploadPaperModal({ isOpen, onClose, onSuccessUpload, onV
     let hasError = false;
 
     files.forEach((file) => {
-      if (!['image/jpeg', 'image/jpg', 'image/png', 'image/webp'].includes(file.type)) {
-        setError('Only JPG, PNG, and WebP image files are supported.');
+      if (
+        !["image/jpeg", "image/jpg", "image/png", "image/webp"].includes(
+          file.type,
+        )
+      ) {
+        setError("Only JPG, PNG, and WebP image files are supported.");
         hasError = true;
         return;
       }
@@ -59,13 +82,13 @@ export default function UploadPaperModal({ isOpen, onClose, onSuccessUpload, onV
 
     if (!hasError) setError(null);
 
-    setSelectedFiles(prev => [...prev, ...validFiles]);
-    setPreviews(prev => [...prev, ...validPreviews]);
+    setSelectedFiles((prev) => [...prev, ...validFiles]);
+    setPreviews((prev) => [...prev, ...validPreviews]);
   };
 
   const removeFile = (index) => {
-    setSelectedFiles(prev => prev.filter((_, i) => i !== index));
-    setPreviews(prev => {
+    setSelectedFiles((prev) => prev.filter((_, i) => i !== index));
+    setPreviews((prev) => {
       URL.revokeObjectURL(prev[index]);
       return prev.filter((_, i) => i !== index);
     });
@@ -75,22 +98,23 @@ export default function UploadPaperModal({ isOpen, onClose, onSuccessUpload, onV
     e.preventDefault();
     setError(null);
 
-    const finalExamType = examType === 'Other' ? customExamType.trim() : examType;
+    const finalExamType =
+      examType === "Other" ? customExamType.trim() : examType;
 
     if (!course.trim()) {
-      setError('Please enter or select a Course name.');
+      setError("Please enter or select a Course name.");
       return;
     }
     if (!year || isNaN(parseInt(year, 10))) {
-      setError('Please enter a valid Year.');
+      setError("Please enter a valid Year.");
       return;
     }
     if (!finalExamType) {
-      setError('Please select or specify an Exam Type.');
+      setError("Please select or specify an Exam Type.");
       return;
     }
     if (selectedFiles.length === 0) {
-      setError('Please upload at least one question paper image page.');
+      setError("Please upload at least one question paper image page.");
       return;
     }
 
@@ -98,7 +122,11 @@ export default function UploadPaperModal({ isOpen, onClose, onSuccessUpload, onV
     if (!bypassDuplicateCheck) {
       try {
         setLoading(true);
-        const dupCheck = await checkDuplicatePaper(course.trim(), year, finalExamType);
+        const dupCheck = await checkDuplicatePaper(
+          course.trim(),
+          year,
+          finalExamType,
+        );
         setLoading(false);
 
         if (dupCheck.exists && dupCheck.existingPaper) {
@@ -106,7 +134,7 @@ export default function UploadPaperModal({ isOpen, onClose, onSuccessUpload, onV
           return; // Pause execution to let user decide in modal
         }
       } catch (err) {
-        console.error('Duplicate check error:', err);
+        console.error("Duplicate check error:", err);
         // Continue if duplicate check API fails
         setLoading(false);
       }
@@ -116,12 +144,12 @@ export default function UploadPaperModal({ isOpen, onClose, onSuccessUpload, onV
     try {
       setLoading(true);
       const formData = new FormData();
-      formData.append('course', course.trim());
-      formData.append('year', year);
-      formData.append('exam_type', finalExamType);
+      formData.append("course", course.trim());
+      formData.append("year", year);
+      formData.append("exam_type", finalExamType);
 
-      selectedFiles.forEach(file => {
-        formData.append('files', file);
+      selectedFiles.forEach((file) => {
+        formData.append("files", file);
       });
 
       const res = await uploadPaperApi(formData);
@@ -137,7 +165,7 @@ export default function UploadPaperModal({ isOpen, onClose, onSuccessUpload, onV
       onClose();
     } catch (err) {
       setLoading(false);
-      setError(err.message || 'Failed to upload paper.');
+      setError(err.message || "Failed to upload paper.");
     }
   };
 
@@ -146,26 +174,24 @@ export default function UploadPaperModal({ isOpen, onClose, onSuccessUpload, onV
     setDuplicateWarningData(null);
     // Trigger submit directly
     setTimeout(() => {
-      const formElement = document.getElementById('upload-paper-form');
+      const formElement = document.getElementById("upload-paper-form");
       if (formElement) formElement.requestSubmit();
     }, 50);
   };
 
   return (
     <>
-      <div className="fixed inset-0 z-40 flex items-center justify-center p-4 bg-black/40 backdrop-blur-xs animate-fade-in" onClick={onClose}>
-        <div 
+      <div
+        className="fixed inset-0 z-40 flex items-center justify-center p-4 bg-black/40 backdrop-blur-xs animate-fade-in"
+        onClick={onClose}
+      >
+        <div
           className="window-card bg-white dark:bg-[#132238] rounded-2xl max-w-2xl w-full shadow-2xl border border-[#5798D7]/30 max-h-[90vh] flex flex-col relative overflow-hidden"
           onClick={(e) => e.stopPropagation()}
         >
           {/* Window Header */}
           <div className="window-header bg-[#E6F1FA] dark:bg-[#1A2C46] border-b border-[#5798D7]/20 px-5 py-3.5 flex items-center justify-between shrink-0">
             <div className="flex items-center space-x-3">
-              <div className="traffic-dots">
-                <span className="traffic-dot bg-[#ff5f56]" />
-                <span className="traffic-dot bg-[#ffbd2e]" />
-                <span className="traffic-dot bg-[#27c93f]" />
-              </div>
               <div className="flex items-center space-x-2 pl-2">
                 <Upload className="w-4 h-4 text-black dark:text-white" />
                 <h2 className="text-sm font-black text-black dark:text-white tracking-tight">
@@ -182,8 +208,11 @@ export default function UploadPaperModal({ isOpen, onClose, onSuccessUpload, onV
           </div>
 
           {/* Form */}
-          <form id="upload-paper-form" onSubmit={handleSubmit} className="p-6 overflow-y-auto space-y-5">
-            
+          <form
+            id="upload-paper-form"
+            onSubmit={handleSubmit}
+            className="p-6 overflow-y-auto space-y-5"
+          >
             {error && (
               <div className="p-4 bg-red-50 dark:bg-red-950/60 border border-red-200 dark:border-red-900/60 rounded-xl flex items-start space-x-3 text-red-700 dark:text-red-300 text-sm">
                 <AlertCircle className="w-5 h-5 shrink-0 mt-0.5" />
@@ -214,7 +243,6 @@ export default function UploadPaperModal({ isOpen, onClose, onSuccessUpload, onV
 
             {/* Grid for Year & Exam Type */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              
               {/* Year Field */}
               <div>
                 <label className="block text-xs font-extrabold uppercase tracking-wider text-black dark:text-slate-200 mb-1.5">
@@ -248,13 +276,13 @@ export default function UploadPaperModal({ isOpen, onClose, onSuccessUpload, onV
                   <option value="Other">Other...</option>
                 </select>
               </div>
-
             </div>
 
-            {examType === 'Other' && (
+            {examType === "Other" && (
               <div>
                 <label className="block text-xs font-extrabold uppercase tracking-wider text-black dark:text-slate-200 mb-1.5">
-                  Specify Custom Exam Type <span className="text-red-500">*</span>
+                  Specify Custom Exam Type{" "}
+                  <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="text"
@@ -271,7 +299,8 @@ export default function UploadPaperModal({ isOpen, onClose, onSuccessUpload, onV
             <div>
               <div className="flex items-center justify-between mb-1.5">
                 <label className="block text-xs font-extrabold uppercase tracking-wider text-black dark:text-slate-200">
-                  Question Paper Page Image(s) <span className="text-red-500">*</span>
+                  Question Paper Page Image(s){" "}
+                  <span className="text-red-500">*</span>
                 </label>
                 <span className="text-xs text-black/60 dark:text-slate-400 font-semibold">
                   Multiple pages supported (JPG, PNG, WebP)
@@ -300,12 +329,20 @@ export default function UploadPaperModal({ isOpen, onClose, onSuccessUpload, onV
             {previews.length > 0 && (
               <div>
                 <p className="text-xs font-extrabold uppercase tracking-wider text-black dark:text-slate-200 mb-2">
-                  Uploaded Page Order ({previews.length} page{previews.length !== 1 ? 's' : ''})
+                  Uploaded Page Order ({previews.length} page
+                  {previews.length !== 1 ? "s" : ""})
                 </p>
                 <div className="grid grid-cols-3 sm:grid-cols-4 gap-3">
                   {previews.map((src, index) => (
-                    <div key={index} className="relative group rounded-xl overflow-hidden border border-[#5798D7]/30 bg-[#F4F8FC] dark:bg-[#0E1828] aspect-[3/4]">
-                      <img src={src} alt={`Page ${index + 1}`} className="w-full h-full object-cover" />
+                    <div
+                      key={index}
+                      className="relative group rounded-xl overflow-hidden border border-[#5798D7]/30 bg-[#F4F8FC] dark:bg-[#0E1828] aspect-[3/4]"
+                    >
+                      <img
+                        src={src}
+                        alt={`Page ${index + 1}`}
+                        className="w-full h-full object-cover"
+                      />
                       <div className="absolute top-1 left-1 bg-[#E6F1FA] dark:bg-[#1A2C46] text-black dark:text-white border border-[#5798D7]/30 text-[10px] font-mono px-1.5 py-0.5 rounded font-bold shadow-xs">
                         P{index + 1}
                       </div>
@@ -348,7 +385,6 @@ export default function UploadPaperModal({ isOpen, onClose, onSuccessUpload, onV
                 )}
               </button>
             </div>
-
           </form>
         </div>
       </div>

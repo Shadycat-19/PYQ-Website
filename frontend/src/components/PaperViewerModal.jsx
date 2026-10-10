@@ -1,30 +1,29 @@
-import React, { useState } from 'react';
-import { X, Download, ZoomIn, ZoomOut, RotateCcw, FileText } from 'lucide-react';
-import { getPaperDownloadUrl } from '../services/api';
+import React, { useState } from "react";
+import {
+  X,
+  Download,
+  ZoomIn,
+  ZoomOut,
+  RotateCcw,
+  FileText,
+} from "lucide-react";
+import { getPaperDownloadUrl } from "../services/api";
 
 export default function PaperViewerModal({ paper, onClose }) {
   const [zoomLevel, setZoomLevel] = useState(100);
 
   if (!paper) return null;
 
-  const handleZoomIn = () => setZoomLevel(prev => Math.min(prev + 25, 200));
-  const handleZoomOut = () => setZoomLevel(prev => Math.max(prev - 25, 50));
+  const handleZoomIn = () => setZoomLevel((prev) => Math.min(prev + 25, 200));
+  const handleZoomOut = () => setZoomLevel((prev) => Math.max(prev - 25, 50));
   const handleResetZoom = () => setZoomLevel(100);
 
   return (
     <div className="fixed inset-0 z-50 flex flex-col bg-[#000000]/60 backdrop-blur-sm animate-fade-in">
-      
       {/* Top Header Controls Bar (macOS Window Header style) */}
       <div className="flex items-center justify-between px-6 py-3.5 bg-[#E6F1FA] dark:bg-[#1A2C46] border-b border-[#5798D7]/30 shadow-sm transition-colors">
-        
         {/* Left: Traffic Dots & Metadata */}
         <div className="flex items-center space-x-4">
-          <div className="traffic-dots">
-            <span className="traffic-dot bg-[#ff5f56]" />
-            <span className="traffic-dot bg-[#ffbd2e]" />
-            <span className="traffic-dot bg-[#27c93f]" />
-          </div>
-
           <div className="flex items-center space-x-3 pl-2">
             <div className="p-1.5 bg-[#5798D7]/20 text-black dark:text-white rounded-lg">
               <FileText className="w-4 h-4 text-black dark:text-white" />
@@ -40,7 +39,9 @@ export default function PaperViewerModal({ paper, onClose }) {
                   {paper.exam_type}
                 </span>
                 <span>•</span>
-                <span>{paper.pages ? paper.pages.length : paper.page_count} Page(s)</span>
+                <span>
+                  {paper.pages ? paper.pages.length : paper.page_count} Page(s)
+                </span>
               </div>
             </div>
           </div>
@@ -48,8 +49,7 @@ export default function PaperViewerModal({ paper, onClose }) {
 
         {/* Toolbar: Zoom Controls & Download */}
         <div className="flex items-center space-x-3">
-          
-          <div className="flex items-center bg-white dark:bg-[#0E1828] rounded-xl p-1 border border-[#5798D7]/30 shadow-xs">
+          {/* <div className="flex items-center bg-white dark:bg-[#0E1828] rounded-xl p-1 border border-[#5798D7]/30 shadow-xs">
             <button
               onClick={handleZoomOut}
               disabled={zoomLevel <= 50}
@@ -58,7 +58,7 @@ export default function PaperViewerModal({ paper, onClose }) {
             >
               <ZoomOut className="w-4 h-4 text-black dark:text-white" />
             </button>
-            
+
             <span className="px-3 text-xs font-mono font-bold text-black dark:text-white">
               {zoomLevel}%
             </span>
@@ -81,7 +81,7 @@ export default function PaperViewerModal({ paper, onClose }) {
                 <RotateCcw className="w-3.5 h-3.5 text-black dark:text-white" />
               </button>
             )}
-          </div>
+          </div> */}
 
           <a
             href={getPaperDownloadUrl(paper.id)}
@@ -106,21 +106,20 @@ export default function PaperViewerModal({ paper, onClose }) {
       <div className="flex-1 overflow-y-auto p-4 md:p-8 flex flex-col items-center space-y-8 bg-[#F4F8FC] dark:bg-[#0B1320]">
         {paper.pages && paper.pages.length > 0 ? (
           paper.pages.map((page, idx) => (
-            <div 
+            <div
               key={page.id || idx}
               className="window-card bg-white dark:bg-[#132238] rounded-2xl border border-[#5798D7]/30 shadow-xl overflow-hidden max-w-5xl w-full transition-all duration-200"
               style={{ width: `${zoomLevel}%` }}
             >
               <div className="window-header bg-[#E6F1FA] dark:bg-[#1A2C46] border-b border-[#5798D7]/20 px-4 py-2 flex justify-between items-center text-xs font-bold text-black dark:text-white font-mono">
                 <div className="flex items-center space-x-2">
-                  <div className="traffic-dots">
-                    <span className="traffic-dot bg-[#ff5f56]" />
-                    <span className="traffic-dot bg-[#ffbd2e]" />
-                    <span className="traffic-dot bg-[#27c93f]" />
-                  </div>
-                  <span className="pl-2">Page {page.page_number || idx + 1} of {paper.pages.length}</span>
+                  <span className="pl-2">
+                    Page {page.page_number || idx + 1} of {paper.pages.length}
+                  </span>
                 </div>
-                <span className="text-black/70 dark:text-slate-400">{paper.course}</span>
+                <span className="text-black/70 dark:text-slate-400">
+                  {paper.course}
+                </span>
               </div>
               <div className="w-full bg-white dark:bg-[#0E1828] p-2">
                 <img
@@ -134,11 +133,12 @@ export default function PaperViewerModal({ paper, onClose }) {
           ))
         ) : (
           <div className="text-center py-20 text-black dark:text-white">
-            <p className="font-semibold text-black dark:text-white">No image pages found for this question paper.</p>
+            <p className="font-semibold text-black dark:text-white">
+              No image pages found for this question paper.
+            </p>
           </div>
         )}
       </div>
-
     </div>
   );
 }
